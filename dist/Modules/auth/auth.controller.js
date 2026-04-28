@@ -1,9 +1,9 @@
 import express from "express";
 import authService from "./auth.service.js";
-import success from "../Common/Response/success.response.js";
-import { BadRequest } from "../Common/Exeptions/domain.error.js";
+import success from "../../Common/Response/success.response.js";
+import { BadRequest } from "../../Common/Exeptions/domain.error.js";
 import * as authValidation from "./auth.validation.js";
-import { validation } from "../Middleware/validation.middleware.js";
+import { validation } from "../../Middleware/validation.middleware.js";
 const authRouter = express.Router();
 authRouter.get("/", (req, res) => {
     res.json({ message: "Auth route" });

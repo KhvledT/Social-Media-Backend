@@ -42,4 +42,5 @@ export const commonValidationField = {
     phone: z
         .string()
         .regex(new RegExp(/^(\+201|00201|01)(0|1|2|5)\d{8}$/), "Invalid phone number format"),
+    otp: z.string().regex(/^\d{6}$/)
 };

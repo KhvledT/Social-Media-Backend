@@ -9,5 +9,8 @@ class DBRepo {
     async findOne({ filter, projection, options, }) {
         return await this.model.findOne(filter, projection, options);
     }
+    async findById({ id, projection, options, }) {
+        return await this.model.findById(id, projection, options);
+    }
 }
 export default DBRepo;

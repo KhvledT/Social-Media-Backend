@@ -1,5 +1,5 @@
 import z from "zod";
-import { commonValidationField } from "../Middleware/validation.middleware.js";
+import { commonValidationField } from "../../Middleware/validation.middleware.js";
 import strict from "node:assert/strict";
 export const signupSchema = {
     body: z

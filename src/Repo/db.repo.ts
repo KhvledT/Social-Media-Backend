@@ -4,6 +4,7 @@ import type {
   ProjectionType,
   QueryFilter,
   QueryOptions,
+  Types,
 } from "mongoose";
 
 abstract class DBRepo<T> {
@@ -29,6 +30,17 @@ abstract class DBRepo<T> {
     options?: QueryOptions<T>;
   }) {
     return await this.model.findOne(filter, projection, options);
+  }
+  public async findById({
+    id,
+    projection,
+    options,
+  }: {
+    id: string | Types.ObjectId;
+    projection?: ProjectionType<T> | null | undefined;
+    options?: QueryOptions<T>;
+  }) {
+    return await this.model.findById(id, projection, options);
   }
 }
 

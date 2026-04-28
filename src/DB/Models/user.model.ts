@@ -1,4 +1,4 @@
-import { Schema, model, connect, type HydratedDocument } from "mongoose";
+import { Schema, model, type HydratedDocument } from "mongoose";
 import { ProviderEnum, GenderEnum, RoleEnum } from "../../enums/user.enums.js";
 
 export interface IUser {
@@ -19,7 +19,7 @@ export interface IUser {
 export type IHUser = HydratedDocument<IUser>; 
 
 const userSchema = new Schema<IUser>({
-  userName: { type: String, required: true, unique: true },
+  userName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: {
     type: String,

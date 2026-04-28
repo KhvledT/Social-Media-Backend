@@ -11,4 +11,4 @@ class UserRepo extends DBRepo<IUser> {
     }
 }
 
-export default UserRepo;
+export default new UserRepo();

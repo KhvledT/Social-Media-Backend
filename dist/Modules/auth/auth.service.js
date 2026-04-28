@@ -1,13 +1,14 @@
-import { BadRequest, Conflict, NotFound, } from "../Common/Exeptions/domain.error.js";
-import { encrptValue } from "../Common/security/encrypt.js";
-import { compareOperation, hashOperation } from "../Common/security/hash.js";
-import Token from "../Common/security/token.js";
-import UserRepo from "../Repo/user.repo.js";
-import MailService from '../Common/Email/email.service.js';
-import { EmailTypeEnum } from "../enums/email.enum.js";
-import redisService from "../DB/Redis/redis.service.js";
+import { BadRequest, Conflict, NotFound, } from "../../Common/Exeptions/domain.error.js";
+import { encrptValue } from "../../Common/security/encrypt.js";
+import { compareOperation, hashOperation } from "../../Common/security/hash.js";
+import Token from "../../Common/security/token.js";
+import UserRepo from "../../Repo/user.repo.js";
+import MailService from '../../Common/Email/email.service.js';
+import { EmailTypeEnum } from "../../enums/email.enum.js";
+import redisService from "../../DB/Redis/redis.service.js";
+import userRepo from "../../Repo/user.repo.js";
 class AuthService {
-    _userRepo =  UserRepo;
+    _userRepo = userRepo;
     _TokenService = Token;
     _mailService = MailService;
     _redisService = redisService;
