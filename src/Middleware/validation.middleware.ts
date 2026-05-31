@@ -2,13 +2,24 @@ import type { NextFunction, Request, Response } from "express";
 import { BadRequest } from "../Common/Exeptions/domain.error.js";
 import { z, type ZodType } from "zod";
 import { GenderEnum } from "../enums/user.enums.js";
+import { Types } from "mongoose";
 
 type KeyReqType = keyof Request;
 
-export function validation(Schema: Partial<Record<KeyReqType, ZodType>>) {
+export function validation(
+  Schema: Partial<Record<KeyReqType, ZodType>>,
+  filesInBody: boolean = false,
+) {
   return (req: Request, res: Response, next: NextFunction) => {
     const validationErrors: { path: PropertyKey[]; message: string }[] = [];
     for (const key of Object.keys(Schema) as KeyReqType[]) {
+      if (Schema[key] == undefined) {
+        continue;
+      }
+      if (key == "body" && filesInBody == true) {
+        req.body = { ...req.body, files: req.files };
+      }
+
       const result = Schema[key]!.safeParse(req[key]);
 
       if (!result.success) {
@@ -30,6 +41,10 @@ export function validation(Schema: Partial<Record<KeyReqType, ZodType>>) {
 }
 
 export const commonValidationField = {
+  id: z.string().refine((value) => {
+    return Types.ObjectId.isValid(value);
+  }, "Invalid Tag(ObjectId) ID"),
+
   userName: z
     .string()
     .min(3, "Username must be at least 3 characters long")
@@ -62,5 +77,5 @@ export const commonValidationField = {
       new RegExp(/^(\+201|00201|01)(0|1|2|5)\d{8}$/),
       "Invalid phone number format",
     ),
-  otp: z.string().regex(/^\d{6}$/)
+  otp: z.string().regex(/^\d{6}$/),
 };

@@ -1,4 +1,4 @@
-import type { ObjectId } from "mongoose";
+import type { ObjectId, Types } from "mongoose";
 import type { EmailTypeEnum } from "../../enums/email.enum.js";
 import { client } from "./redis.connection.js";
 class RedisService {
@@ -58,15 +58,15 @@ class RedisService {
     return await client.decr(key);
   }
 
-//   async hSet({ key, field, value, exType = "EX", exValue = 60 }) {
-//     return await client.hSetEx(key, field, value, {
-//       expiration: { type: exType, value: exValue },
-//     });
-//   }
+  //   async hSet({ key, field, value, exType = "EX", exValue = 60 }) {
+  //     return await client.hSetEx(key, field, value, {
+  //       expiration: { type: exType, value: exValue },
+  //     });
+  //   }
 
-//   async hGet({ key, field }) {
-//     return await client.hGetEx(key, field);
-//   }
+  //   async hGet({ key, field }) {
+  //     return await client.hGetEx(key, field);
+  //   }
 
   async get(key: string) {
     return await client.get(key);
@@ -103,6 +103,18 @@ class RedisService {
 
     await client.set(key, value);
     return 1;
+  }
+
+  getFCMKey(userId: Types.ObjectId | string) {
+    return `FCM::${userId}`;
+  }
+
+  async addFCMTokenToSet(userId: Types.ObjectId | string, fcmToken: string) {
+    return await client.sAdd(this.getFCMKey(userId), fcmToken); 
+  }
+
+  async getMemberFCMTokens(userId: Types.ObjectId | string) {
+    return await client.sMembers(this.getFCMKey(userId));
   }
 }
 

@@ -25,12 +25,14 @@ import { GOOGLE_CLIENT_ID } from "../../config/config.service.js";
 import { OAuth2Client } from "google-auth-library";
 import { ProviderEnum } from "../../enums/user.enums.js";
 import type { IHUser } from "../../DB/Models/user.model.js";
+import NotificationService from "../../Common/Notification/Notification.service.js";
 
 class AuthService {
   private _userRepo = userRepo;
   private _TokenService = Token;
   private _mailService = MailService;
   private _redisService = redisService;
+  private _notificationService = NotificationService;
 
   public async login(bodyData: LoginDto): Promise<{
     access_Token: string;
@@ -56,6 +58,21 @@ class AuthService {
     if (!isPassword) {
       throw new NotFound("password or email is incorrect");
     }
+
+    if (bodyData.FCM) {
+      await this._redisService.addFCMTokenToSet(user._id, bodyData.FCM);
+
+      const tokens = await this._redisService.getMemberFCMTokens(user._id);
+
+      await this._notificationService.sendNotifications({
+        tokens,
+        data: {
+          title: "user logged in",
+          body: `new logged in at ${new Date()}`,
+        },
+      });
+    }
+
     return this._TokenService.generateAccessAndRefreshToken(user);
   }
 

@@ -125,14 +125,12 @@ export async function uploadLargeFilesToCloudinary(Files: Express.Multer.File[],
     return imageUrls;
 }
 
-export async function deleteFile(publicId: string): Promise<string> {
-    try {
-        const result = await cloudinary.uploader.destroy(publicId, {
-            invalidate: true,
-        });
-        return result.result;
-    } catch (error) {
-        console.error(error);
-        throw new Error('Failed to delete image');
-    }
+export async function deleteFileFromCloudinary(publicId: string) {
+  try {
+    const result = await cloudinary.uploader.destroy(publicId); 
+    // result example: { result: 'ok' }
+    // publicId example: 'posts/abc123.jpg'
+  } catch (error) {
+    console.log(error);
+  }
 }

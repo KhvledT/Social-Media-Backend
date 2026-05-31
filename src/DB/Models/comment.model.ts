@@ -1,26 +1,28 @@
 import { model, Schema, Types, type HydratedDocument } from "mongoose";
-import { PostPrivacyEnum } from "../../enums/post.enum.js";
+import type { IPost } from "./post.model.js";
 
-export interface IPost {
+export interface IComment {
   content?: string;
   attachments?: string;
 
   likes?: Types.ObjectId[];
   tags?: Types.ObjectId[];
 
-  privacy: PostPrivacyEnum;
+  postId: Types.ObjectId | IPost;
+  commentId: Types.ObjectId;
+
   createdBy: Types.ObjectId;
 
   deletedAt: Date;
 }
 
-export type HIPost = HydratedDocument<IPost>;
+export type HIComment = HydratedDocument<IComment>;
 
-const postSchema = new Schema<IPost>(
+const commentSchema = new Schema<IComment>(
   {
     content: {
       type: String,
-      required: function (this: IPost): boolean {
+      required: function (this: IComment): boolean {
         return !this.attachments?.length;
       },
     },
@@ -29,35 +31,24 @@ const postSchema = new Schema<IPost>(
     likes: [{ type: Types.ObjectId, ref: "User" }],
     tags: [{ type: Types.ObjectId, ref: "User" }],
 
-    privacy: {
-      type: Number,
-      enum: PostPrivacyEnum,
-      default: PostPrivacyEnum.PUBLIC,
-    },
+    postId: { type: Types.ObjectId, ref: "Post", required: true },
+    commentId: { type: Types.ObjectId, ref: "Comment" },
+
     createdBy: { type: Types.ObjectId, ref: "User", required: true },
     deletedAt: Date,
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
   },
 );
 
-postSchema.pre(["findOne", "find", "countDocuments"], function () {
+commentSchema.pre(["findOne", "find", "countDocuments"], function () {
   const query = this.getQuery();
   if (query?.paranoid == true) {
     this.setQuery({ ...query, deletedAt: { $exists: false } });
   }
 });
 
-postSchema.virtual("comments", {
-  localField: "_id",
-  foreignField: "postId",
-  ref: "Comment",
-  justOne: true,
-});
+const CommentModel = model<IComment>("Comment", commentSchema);
 
-const PostModel = model<IPost>("Post", postSchema);
-
-export default PostModel;
+export default CommentModel;

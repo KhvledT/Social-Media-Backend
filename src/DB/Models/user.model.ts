@@ -1,4 +1,4 @@
-import { Schema, model, type HydratedDocument } from "mongoose";
+import { Schema, Types, model, type HydratedDocument } from "mongoose";
 import { ProviderEnum, GenderEnum, RoleEnum } from "../../enums/user.enums.js";
 import { hashOperation } from "../../Common/security/hash.js";
 import { encrptValue } from "../../Common/security/encrypt.js";
@@ -13,6 +13,7 @@ export interface IUser {
   confirmEmail: boolean;
   profilePicture: string;
   coverPicture: string[];
+  friends: Types.ObjectId[];
   age: number;
   phone: string;
   gender: GenderEnum;
@@ -41,6 +42,7 @@ const userSchema = new Schema<IUser>(
     confirmEmail: { type: Boolean, default: false },
     profilePicture: { type: String, default: "" },
     coverPicture: { type: [String], default: [] },
+    friends: [{ type: Types.ObjectId, ref: "User" }],
     age: { type: Number },
     phone: { type: String },
     gender: { type: Number, enum: GenderEnum, default: GenderEnum.Male },

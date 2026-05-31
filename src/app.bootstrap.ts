@@ -5,6 +5,8 @@ import { SERVER_PORT } from "./config/config.service.js";
 import { DB_Connection } from "./DB/dbconnection.js";
 import { redisConnection } from "./DB/Redis/redis.connection.js";
 import userRouter from "./Modules/user/user.controller.js";
+import postRouter from "./Modules/post/post.controller.js";
+import commentRouter from "./Modules/comment/comment.controller.js";
 
 async function bootstrap() {
   const app: express.Express = express();
@@ -13,6 +15,9 @@ async function bootstrap() {
   app.use(express.json());
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
+  app.use("/post", postRouter);
+  app.use("/comment", commentRouter);
+
 
   app.use(
     "/",

@@ -19,3 +19,6 @@ export const NODEMAILER_USER = process.env.NODEMAILER_USER as string;
 export const NODEMAILER_PASS = process.env.NODEMAILER_PASS as string;
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
 export const REDIS_URL = process.env.REDIS_URL as string;
+export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME as string;
+export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY as string;
+export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET as string;

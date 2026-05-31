@@ -22,6 +22,7 @@ export const loginSchema = {
   body: z.strictObject({
     email: commonValidationField.email,
     password: commonValidationField.password,
+    FCM: z.string().optional(),
   }),
 };
 
