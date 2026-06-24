@@ -195,19 +195,23 @@ class PostService {
 
   async likeOrDislikePost(
     user: IHUser,
-    postId: Types.ObjectId | string,
+    postId: string,
     react: number | string,
   ) {
+
     const updateQuery =
-      parseInt(react as string) == ReactTypeEnum.LIKE
+      react == ReactTypeEnum.LIKE
         ? { $addToSet: { likes: user._id } }
         : { $pull: { likes: user._id } };
 
+    const filter = {
+      _id: postId,
+      $or: this._postRepo.checkPostPrivacy(user),
+    };
+    
+
     const post = await this._postRepo.findOneAndUpdate({
-      filter: {
-        _id: postId,
-        $or: this._postRepo.checkPostPrivacy(user),
-      },
+      filter,
 
       update: updateQuery,
 

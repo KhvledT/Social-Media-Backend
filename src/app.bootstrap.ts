@@ -7,17 +7,31 @@ import { redisConnection } from "./DB/Redis/redis.connection.js";
 import userRouter from "./Modules/user/user.controller.js";
 import postRouter from "./Modules/post/post.controller.js";
 import commentRouter from "./Modules/comment/comment.controller.js";
+import schema from "./Modules/gql/schame.gql.js";
+import { createHandler } from "graphql-http/lib/use/express";
+import { authentication } from "./Middleware/authentication.middleware.js";
 
 async function bootstrap() {
   const app: express.Express = express();
   DB_Connection();
-  await redisConnection()
+  await redisConnection();
   app.use(express.json());
+
+  app.all(
+    "/graphql",
+    authentication(),
+    createHandler({
+      schema,
+      context: (req) => ({
+        user: req.raw.user,
+        tokenPayload: req.raw.tokenPayload, 
+      }),
+    }),
+  );
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
   app.use("/post", postRouter);
   app.use("/comment", commentRouter);
-
 
   app.use(
     "/",

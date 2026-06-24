@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { BadRequest } from "../Common/Exeptions/domain.error.js";
+import { BadRequest, MapGQLError } from "../Common/Exeptions/domain.error.js";
 import { z, type ZodType } from "zod";
 import { GenderEnum } from "../enums/user.enums.js";
 import { Types } from "mongoose";
@@ -38,6 +38,24 @@ export function validation(
     }
     next();
   };
+}
+
+export function validationGQL<T = any>(Schema: ZodType, value: T) {
+  const result = Schema!.safeParse(value);
+
+  if (!result.success) {
+    MapGQLError(
+      new BadRequest(
+        "Validation Error",
+        result.error.issues.map((err) => {
+          return {
+            path: err.path,
+            message: err.message,
+          };
+        }),
+      ),
+    );
+  }
 }
 
 export const commonValidationField = {
