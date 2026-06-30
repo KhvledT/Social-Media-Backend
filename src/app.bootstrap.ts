@@ -10,6 +10,7 @@ import commentRouter from "./Modules/comment/comment.controller.js";
 import schema from "./Modules/gql/schame.gql.js";
 import { createHandler } from "graphql-http/lib/use/express";
 import { authentication } from "./Middleware/authentication.middleware.js";
+import realtimeGateway from "./Modules/realtime/realtime.gateway.js";
 
 async function bootstrap() {
   const app: express.Express = express();
@@ -46,9 +47,11 @@ async function bootstrap() {
 
   app.use(globalErrorHandler);
 
-  app.listen(SERVER_PORT, () => {
+  const server = app.listen(SERVER_PORT, () => {
     console.log(`Server is running on port ${SERVER_PORT}`);
   });
+
+  realtimeGateway.initializeIo(server);
 }
 
 export default bootstrap;

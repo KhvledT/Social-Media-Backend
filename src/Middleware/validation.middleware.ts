@@ -58,6 +58,24 @@ export function validationGQL<T = any>(Schema: ZodType, value: T) {
   }
 }
 
+export function validationRealtime<T = any>(Schema: ZodType, value: T) {
+  const result = Schema!.safeParse(value);
+
+  if (!result.success) {
+    MapGQLError(
+      new BadRequest(
+        "Validation Error",
+        result.error.issues.map((err) => {
+          return {
+            path: err.path,
+            message: err.message,
+          };
+        }),
+      ),
+    );
+  }
+}
+
 export const commonValidationField = {
   id: z.string().refine((value) => {
     return Types.ObjectId.isValid(value);

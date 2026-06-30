@@ -7,14 +7,21 @@ import { validation } from "../../Middleware/validation.middleware.js";
 import { logoutSchema } from "./user.validation.js";
 import cloudFileUpload from "../../Common/multer/multer.config.js";
 import { StorageApproachEnum } from "../../enums/multer.enum.js";
+import chatRouter from "../chat/chat.controller.js";
 
 const userRouter: express.Router = express.Router();
+
+userRouter.use("/:userId/chat", chatRouter)
 
 userRouter.get(
   "/",
   authentication(),
-  (req: express.Request, res: express.Response) => {
-    res.json({ message: "User route", user: req.user });
+  async (req: express.Request, res: express.Response) => {
+    const result = await userService.getUserData(req.user)
+    success({
+      res,
+      result
+    })
   },
 );
 

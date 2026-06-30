@@ -9,6 +9,8 @@ import { RoleEnum } from "../../enums/user.enums.js";
 import { randomUUID } from "node:crypto";
 import jwt from "jsonwebtoken";
 import type { IHUser } from "../../DB/Models/user.model.js";
+import userRepo from "../../Repo/user.repo.js";
+import { BadRequest } from "../Exeptions/domain.error.js";
 
 class TokenService {
   getSignature(role : RoleEnum = RoleEnum.User) {
@@ -47,6 +49,13 @@ class TokenService {
 
   decodeToken(token: string) {
     return jwt.decode(token);
+  }
+
+  async checkToken(token: string) {
+    const verifiedToken = this.verifyToken({ token, signature: JWT_SECRET_ACCESS_USER }) as jwt.JwtPayload;
+    if (!verifiedToken) throw new BadRequest("Invalid token");
+    const user = await userRepo.findById({ id: verifiedToken.sub as string });
+    return { user, verifiedToken };
   }
 
   generateAccessAndRefreshToken(user: IHUser) {

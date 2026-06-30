@@ -1,5 +1,6 @@
 import type { JwtPayload } from "jsonwebtoken";
 import type { IHUser } from "../../DB/Models/user.model.js";
+import type { Socket } from "socket.io";
 
 
 
@@ -9,3 +10,13 @@ declare module "express-serve-static-core"{
         tokenPayload: JwtPayload
     }
 }
+
+declare module "socket.io" {
+  interface SocketAuthType extends Socket {
+    data: {
+      user: IHUser;
+      verifiedToken: JwtPayload;
+    };
+  }
+}
+
